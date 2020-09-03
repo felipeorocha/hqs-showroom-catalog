@@ -17,6 +17,7 @@ class MarvelAPI {
     // const currentOffset = options.page === 1 ? 0 : (options.count * (options.page - 1))
     const lala = options.page * options.count
     const currentOffset = lala - options.count
+
     console.log('currentOffset', currentOffset)
 
     let params = `?apikey=${config.publicKey}&ts=${timeStamp}&hash=${hash}&limit=${options.count}&offset=${currentOffset}`
