@@ -6,7 +6,7 @@ import { marvelApi as config } from '../config'
 class MarvelAPI {
 
   static getCharacters(origOptions = {}) {
-    const defaultOptions = { page: 0, count: 20, name: '', nameStartsWith: '' }
+    const defaultOptions = { page: 0, count: 10, name: '', nameStartsWith: '' }
     const options = Object.assign(defaultOptions, origOptions)
 
     const URI = '/v1/public/characters'
@@ -14,7 +14,10 @@ class MarvelAPI {
     const hash = CryptoJS.MD5(timeStamp + config.privateKey + config.publicKey)
       .toString(CryptoJS.enc.Hex)
 
-    const currentOffset = options.page === 1 ? 0 : (options.count * (options.page - 1))
+    // const currentOffset = options.page === 1 ? 0 : (options.count * (options.page - 1))
+    const lala = options.page * options.count
+    const currentOffset = lala - options.count
+    console.log('currentOffset', currentOffset)
 
     let params = `?apikey=${config.publicKey}&ts=${timeStamp}&hash=${hash}&limit=${options.count}&offset=${currentOffset}`
 
