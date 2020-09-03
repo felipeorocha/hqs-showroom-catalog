@@ -11,7 +11,7 @@ const styleSheet = createStyleSheet('CardInfo', ({
   transitions,
 }) => ({
   card: {
-    'height': 180,
+    'height': 240,
     'backgroundPosition': 'center center',
     'backgroundSize': 'cover',
     'border': 0,
@@ -40,7 +40,7 @@ const styleSheet = createStyleSheet('CardInfo', ({
   },
   comics: {
     color: palette.common.darkWhite,
-    fontSize: 12,
+    fontSize: 24,
   },
   textContainer: {
     position: 'absolute',
