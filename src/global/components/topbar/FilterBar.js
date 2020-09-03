@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { compose } from 'recompose'
 import { connect } from 'react-redux'
@@ -8,7 +8,7 @@ import SearchIcon from 'material-ui-icons/Search'
 import IconButton from 'material-ui/IconButton'
 import ClearIcon from 'material-ui-icons/Clear'
 import { CircularProgress } from 'material-ui/Progress'
-import { filterResults, clearFilter } from '../../../store/actions'
+import { filterResults, clearFilter, loadAllCharacters } from '../../../store/actions'
 
 const styleSheet = createStyleSheet('FilterBar', (theme) => ({
   'filterBarContainer': {
@@ -59,65 +59,61 @@ const styleSheet = createStyleSheet('FilterBar', (theme) => ({
   },
 }))
 
-class FilterBar extends Component {
-  constructor() {
-    super()
-    this.state = {
-      searchText: '',
+const FilterBar = ({ classes, isSearching, filter, filterResults, clearFilter }) => {
+  const [searchText, setSearchText] = useState('')
+
+  const onClearPress = (event) => {
+    event.preventDefault()
+
+    const fetchChar = (func) => {
+      setSearchText('')
+      func()
     }
+
+    fetchChar(clearFilter)
+    filterResults('')
   }
 
-  onClearPress = (event) => {
-    event.preventDefault()
-    this.setState({ searchText: '' }, () => {
-      this.props.clearFilter()
-    })
+  const handleChangeFilter = (event) => {
+    setSearchText(event.target.value)
   }
-  handleChange = (event) => {
-    this.setState({ searchText: event.target.value })
-  }
-  handleChangeFilter = (event) => {
-    this.setState({ searchText: event.target.value })
-  }
-  handleKeyPress = (event) => {
+
+  const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       event.preventDefault()
-      this.props.filterResults(event.target.value)
+      filterResults(event.target.value)
     }
   }
-  render() {
-    const { classes, isSearching, filter } = this.props
 
-    return (
-      <div className={classes.filterBarContainer}>
-        <Typography type="caption" className={classes.copyRight}>
-          Search character
-        </Typography>
-        <div className={classes.searchInput} style={{ backgroundColor: (!filter) ? classes.searchInput.backgroundColor : 'rgba(0,0,0,0.3)' }}>
-          <input
-            name="search"
-            value={this.state.searchText}
-            type="text"
-            className={classes.input}
-            placeholder="Enter a character..."
-            onChange={this.handleChange}
-            onKeyPress={this.handleKeyPress}
-          />
-          { (!isSearching && !filter) && (
-            <SearchIcon className={classes.icon} />
-          ) }
-          { (!isSearching && filter) && (
-            <IconButton color="contrast" onClick={this.onClearPress} className={classes.button} aria-label="Clear search filter">
-              <ClearIcon className={classes.icon} />
-            </IconButton>
-          ) }
-          { isSearching && (
-            <CircularProgress color="accent" className={classes.loading} size={18} />
-          ) }
-        </div>
+  return (
+    <div className={classes.filterBarContainer}>
+      <Typography type="caption" className={classes.copyRight}>
+        Search character
+      </Typography>
+      <div className={classes.searchInput} style={{ backgroundColor: (!filter) ? classes.searchInput.backgroundColor : 'rgba(0,0,0,0.3)' }}>
+        <input
+          name="search"
+          value={searchText}
+          type="text"
+          className={classes.input}
+          placeholder="Enter a character..."
+          onChange={handleChangeFilter}
+          onKeyPress={handleKeyPress}
+        />
+        { (!isSearching && !filter) && (
+          <SearchIcon className={classes.icon} />
+        ) }
+        { (!isSearching && filter) && (
+          <IconButton color="contrast" onClick={onClearPress} className={classes.button} aria-label="Clear search filter">
+            <ClearIcon className={classes.icon} />
+          </IconButton>
+        ) }
+        { isSearching && (
+          <CircularProgress color="accent" className={classes.loading} size={18} />
+        ) }
       </div>
-    )
-  }
+    </div>
+  )
 }
 
 FilterBar.propTypes = {
@@ -136,7 +132,7 @@ const mapStateToProps = (state) => ({
 
 const enhance = compose(
   withStyles(styleSheet),
-  connect(mapStateToProps, { filterResults, clearFilter }),
+  connect(mapStateToProps, { filterResults, clearFilter, loadAllCharacters }),
 )
 
 export default enhance(FilterBar)
