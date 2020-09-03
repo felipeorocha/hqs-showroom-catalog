@@ -15,7 +15,7 @@ const styleSheet = createStyleSheet('MainLayout', () => ({
   },
   contentWrapper: {
     flex: 1,
-    marginTop: 48,
+    marginTop: 66,
     overflowY: 'scroll',
   },
 }))
