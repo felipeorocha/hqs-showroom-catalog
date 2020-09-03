@@ -1,10 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { withStyles, createStyleSheet } from 'material-ui/styles'
-import { CharactersScreen } from './screens'
-import { TopBar, DetailsModal } from './global/components'
+import Characters from './screens/characters'
+import Header from './components/header'
+import DetailsModal from './components/modal'
 
-const styleSheet = createStyleSheet('MainLayout', () => ({
+const styleSheet = createStyleSheet('Main', () => ({
   root: {
     height: '100vh',
     display: 'flex',
@@ -20,25 +21,24 @@ const styleSheet = createStyleSheet('MainLayout', () => ({
   },
 }))
 
-const MainLayout = (props) => {
-  const classes = props.classes
+const Main = ({ classes }) => {
 
   return (
     <div className={classes.root}>
       <DetailsModal />
       <div className={classes.navbarContainer}>
-        <TopBar />
+        <Header />
       </div>
       <div className={classes.contentWrapper}>
         <DetailsModal />
-        <CharactersScreen />
+        <Characters />
       </div>
     </div>
   )
 }
 
-MainLayout.propTypes = {
+Main.propTypes = {
   classes: PropTypes.object.isRequired,
 }
 
-export default withStyles(styleSheet)(MainLayout)
+export default withStyles(styleSheet)(Main)
