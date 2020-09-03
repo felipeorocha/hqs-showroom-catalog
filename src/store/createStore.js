@@ -1,6 +1,5 @@
 import { createStore, compose, applyMiddleware } from 'redux'
 import createSagaMiddleware from 'redux-saga'
-import { createLogger } from 'redux-logger'
 import rootReducer from './reducers'
 
 export default function configureStore(initialState = {}) {
@@ -12,7 +11,6 @@ export default function configureStore(initialState = {}) {
     compose(
       applyMiddleware(
         sagaMiddleware,
-        // createLogger(),
       ),
       typeof window === 'object' && typeof window.devToolsExtension !== 'undefined' ? window.devToolsExtension() : (f) => f,
     ),

@@ -2,7 +2,6 @@ import CryptoJS from 'crypto-js'
 import moment from 'moment'
 import { marvelApi as config } from '../config'
 
-
 class MarvelAPI {
 
   static getCharacters(origOptions = {}) {

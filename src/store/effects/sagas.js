@@ -7,10 +7,6 @@ import {
 } from '../types'
 import MarvelAPI from '../../services/MarvelAPI'
 
-
-/*
-* Selector. The query depends by the state shape
-*/
 export const getState = (state) => state.app
 
 function* fetchCharactersFromApi(action) {
