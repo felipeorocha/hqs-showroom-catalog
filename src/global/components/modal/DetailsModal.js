@@ -1,5 +1,5 @@
 /* eslint-disable react/no-multi-comp */
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import { compose, onlyUpdateForKeys } from 'recompose'
 import { connect } from 'react-redux'
@@ -106,112 +106,103 @@ const styleSheet = createStyleSheet('DetailsModal', (theme) => ({
   },
 }))
 
-class DetailsModal extends Component {
-  constructor() {
-    super()
-    this.state = {
-      index: 0,
-    }
-  }
-  handlePageClick = (data) => {
+const DetailsModal = ({
+  classes,
+  isLoading,
+  isModalOpen,
+  current,
+  comics,
+  isComicsLoaded,
+  closeCharacterDialog,
+  loadCharacterComics,
+}) => {
+  const handlePageClick = (data) => {
     const selected = data.selected
-    const offset = Math.ceil(selected * this.props.comics.count)
+    const offset = Math.ceil(selected * comics.count)
 
-    this.props.loadCharacterComics(this.props.current.id, offset)
+    loadCharacterComics(current.id, offset)
   }
 
-  render() {
-    const {
-      classes,
-      isLoading,
-      isModalOpen,
-      current,
-      comics,
-      isComicsLoaded,
-      closeCharacterDialog,
-    } = this.props
+  // const pageCount = Math.ceil(comics.total / comics.limit)
+  const image = (Object.keys(current).length) ? `${current.thumbnail.path}/standard_amazing.${current.thumbnail.extension}` : null
 
-    const pageCount = Math.ceil(comics.total / comics.limit)
-    const image = (Object.keys(current).length) ? `${current.thumbnail.path}/standard_amazing.${current.thumbnail.extension}` : null
-
-    return (
-      <div>
-        <Dialog
-          open={isModalOpen}
-          onRequestClose={closeCharacterDialog}
-          maxWidth={'sm'}
-          classes={{
-            paper: classes.paper,
-          }}
-        >
-          <DialogTitle disableTypography classes={{ root: classes.rootTitle }}>
-            <Typography type="title" className={classes.title}>
-              {current.name} | Comics
+  return (
+    <div>
+      <Dialog
+        open={isModalOpen}
+        onRequestClose={closeCharacterDialog}
+        maxWidth={'sm'}
+        classes={{
+          paper: classes.paper,
+        }}
+      >
+        <DialogTitle disableTypography classes={{ root: classes.rootTitle }}>
+          <Typography type="title" className={classes.title}>
+            {current.name} | Comics
+          </Typography>
+        </DialogTitle>
+        { current.description && (
+          <DialogTitle disableTypography className={classes.descContainer}>
+            { image && (
+              <img
+                alt={current.name}
+                src={image}
+                className={classes.avatar}
+                width={120}
+                height={120}
+              />
+            ) }
+            <Typography type="body1" className={classes.description}>
+              {current.description}
             </Typography>
           </DialogTitle>
-          { current.description && (
-            <DialogTitle disableTypography className={classes.descContainer}>
-              { image && (
-                <img
-                  alt={current.name}
-                  src={image}
-                  className={classes.avatar}
-                  width={120}
-                  height={120}
-                />
-              ) }
-              <Typography type="body1" className={classes.description}>
-                {current.description}
+        ) }
+        { (isLoading === true && isComicsLoaded === false) && (
+          <DialogContent className={classes.loadingContainer}>
+            <CircularProgress color="accent" className={classes.progress} />
+          </DialogContent>
+        )}
+        { ((isLoading === false && isComicsLoaded === true) || isComicsLoaded === true) && (
+          <DialogContent style={{ padding: 0, opacity: (isLoading) ? 0.5 : 1, pointerEvents: (isLoading) ? 'none' : 'all' }}>
+            { comics.total === 0 && (
+              <Typography type="body1" className={classes.emptyMessage}>
+                This character has no comic books
               </Typography>
-            </DialogTitle>
-          ) }
-          { (isLoading === true && isComicsLoaded === false) && (
-            <DialogContent className={classes.loadingContainer}>
-              <CircularProgress color="accent" className={classes.progress} />
-            </DialogContent>
-          )}
-          { ((isLoading === false && isComicsLoaded === true) || isComicsLoaded === true) && (
-            <DialogContent style={{ padding: 0, opacity: (isLoading) ? 0.5 : 1, pointerEvents: (isLoading) ? 'none' : 'all' }}>
-              { comics.total === 0 && (
-                <Typography type="body1" className={classes.emptyMessage}>
-                  This character has no comic books
-                </Typography>
-              ) }
-              <div className="comicsList">
-                { comics.results.map((comic) => ( // eslint-disable-line
-                  <ComicItem key={comic.id} comic={comic} />
-                )) }
-              </div>
-            </DialogContent>
-          )}
-          { ((isLoading === false && isComicsLoaded === true && comics.total > 0)
-            || (isComicsLoaded === true && comics.total > 0)) && (
-            <DialogActions classes={{ root: classes.rootActions }}>
-              <ReactPaginate
-                previousLabel={'previous'}
-                nextLabel={'next'}
-                breakLabel={<a href="#">...</a>}
-                breakClassName={classes.paginationItem}
-                pageCount={pageCount}
-                marginPagesDisplayed={2}
-                pageRangeDisplayed={5}
-                onPageChange={this.handlePageClick}
-                containerClassName={classes.paginationContainer}
-                pageClassName={classes.paginationItem}
-                pageLinkClassName={classes.paginationItemLink}
-                previousClassName={classes.paginationNavItem}
-                nextClassName={classes.paginationNavItem}
-                previousLinkClassName={classes.paginationNavItemLink}
-                nextLinkClassName={classes.paginationNavItemLink}
-                subContainerClassName={'pages pagination'}
-                activeClassName={classes.paginationActiveItem}
-              />
-            </DialogActions>
-          )}
-        </Dialog>
-      </div>
-    )
-  }
+            ) }
+            <div className="comicsList">
+              { comics.results.map((comic) => ( // eslint-disable-line
+                <ComicItem key={comic.id} comic={comic} />
+              )) }
+            </div>
+          </DialogContent>
+        )}
+        { ((isLoading === false && isComicsLoaded === true && comics.total > 0)
+          || (isComicsLoaded === true && comics.total > 0)) && (
+          <DialogActions classes={{ root: classes.rootActions }}>
+            <ReactPaginate
+              previousLabel={'previous'}
+              nextLabel={'next'}
+              breakLabel={<a href="#">...</a>}
+              breakClassName={classes.paginationItem}
+              // pageCount={pageCount}
+              marginPagesDisplayed={2}
+              pageRangeDisplayed={5}
+              onPageChange={handlePageClick}
+              containerClassName={classes.paginationContainer}
+              pageClassName={classes.paginationItem}
+              pageLinkClassName={classes.paginationItemLink}
+              previousClassName={classes.paginationNavItem}
+              nextClassName={classes.paginationNavItem}
+              previousLinkClassName={classes.paginationNavItemLink}
+              nextLinkClassName={classes.paginationNavItemLink}
+              subContainerClassName={'pages pagination'}
+              activeClassName={classes.paginationActiveItem}
+            />
+          </DialogActions>
+        )}
+      </Dialog>
+    </div>
+  )
 }
 
 DetailsModal.defaultProps = {
