@@ -1,11 +1,11 @@
 import { createMuiTheme } from 'material-ui/styles'
 import createPalette from 'material-ui/styles/palette'
-import blue from 'material-ui/colors/blue'
+import red from 'material-ui/colors/red'
 import green from 'material-ui/colors/green'
 
 export const theme = createMuiTheme({
   palette: createPalette({
-    primary: blue,
+    primary: red,
     accent: {
       ...green,
     },
