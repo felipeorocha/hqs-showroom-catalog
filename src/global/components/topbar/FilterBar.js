@@ -91,7 +91,7 @@ class FilterBar extends Component {
     return (
       <div className={classes.filterBarContainer}>
         <Typography type="caption" className={classes.copyRight}>
-          Data provided by Marvel. © 2017 MARVEL
+          Search character
         </Typography>
         <div className={classes.searchInput} style={{ backgroundColor: (!filter) ? classes.searchInput.backgroundColor : 'rgba(0,0,0,0.3)' }}>
           <input
@@ -99,7 +99,7 @@ class FilterBar extends Component {
             value={this.state.searchText}
             type="text"
             className={classes.input}
-            placeholder={'Starts with, eg. Spider'}
+            placeholder="Enter a character..."
             onChange={this.handleChange}
             onKeyPress={this.handleKeyPress}
           />
