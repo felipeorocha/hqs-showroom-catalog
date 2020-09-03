@@ -25,19 +25,17 @@ const styleSheet = createStyleSheet('Characters', (theme) => ({
 }))
 
 const Characters = ({ classes, characters, loadCharacterById, loadAllCharacters }) => {
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [charactersPerPage] = useState(10)
 
   useEffect(() => {
     const fetchChar = (func, page) => {
-      setLoading(true)
       func(page)
       setCurrentPage(page)
     }
 
     fetchChar(loadAllCharacters, currentPage)
-    setLoading(false)
   }, [currentPage])
 
   const onPageChange = (page) => {
@@ -56,10 +54,18 @@ const Characters = ({ classes, characters, loadCharacterById, loadAllCharacters 
       </Grid>))
   }
 
+  if (characters.length <= 0) {
+    return (
+      <div>
+        <Loader visible />
+      </div>
+    )
+  }
+
   return (
     <div>
       <Grid container className={classes.contentCards} align={'center'}>
-        { loading ? <Loader visible={loading} /> : renderItems() }
+        { renderItems() }
       </Grid>
       <div>
         <Pagination
@@ -69,7 +75,7 @@ const Characters = ({ classes, characters, loadCharacterById, loadAllCharacters 
           defaultCurrent={1}
           total={90}
         />
-        <Loader visible />
+        {/* { loading ? <Loader visible /> : null } */}
       </div>
     </div>
   )
