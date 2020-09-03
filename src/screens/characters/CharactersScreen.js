@@ -6,13 +6,19 @@ import { connect } from 'react-redux'
 import { compose } from 'recompose'
 import { withStyles, createStyleSheet } from 'material-ui/styles'
 import Grid from 'material-ui/Grid'
-import { Pagination, Row, Col } from 'antd'
+import { Pagination } from 'antd'
+import 'antd/dist/antd.css'
 import { Loader, CardInfo } from '../../global/components'
-import { loadAllCharacters, loadCharacterById, filterResults, clearFilter } from '../../store/actions'
+import { loadAllCharacters, loadCharacterById, filterResults, clearFilter, updateCurrentPage } from '../../store/actions'
 
 const styleSheet = createStyleSheet('CharactersScreen', (theme) => ({
   container: {
     padding: (theme.spacing.unit * 2),
+  },
+  paginator: {
+    display: 'flex',
+    justifyContent: 'center',
+    paddingTop: 40,
   },
   itemCard: {
     display: 'flex',
@@ -20,52 +26,51 @@ const styleSheet = createStyleSheet('CharactersScreen', (theme) => ({
 }))
 
 const CharactersScreen = ({ classes, characters, loadCharacterById, loadAllCharacters }) => {
+  const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
+  const [postsPerPage, setPostsPerpage] = useState(10)
 
   useEffect(() => {
     const fetchChar = (func, page) => {
-      console.log('passou no fetchChar no useEffect')
+      setLoading(true)
       func(page)
       setCurrentPage(page)
     }
-    console.log('effect')
+
     fetchChar(loadAllCharacters, currentPage)
+    setLoading(false)
   }, [currentPage])
 
   const onPageChange = (page) => {
-    console.log('passei no onPageChange')
-    console.log('page', page)
-    console.log('statePage', currentPage)
     setCurrentPage(page)
   }
 
-  // const onClearPress = (event) => {
-  //   event.preventDefault()
-  //   this.setState({ searchText: '' }, () => {
-  //     clearFilter()
-  //   })
-  // }
+  console.log('achars', characters)
+  const indexOfLastPost = currentPage * postsPerPage
+  const indexOfFirstPost = indexOfLastPost - postsPerPage
+  const currentPost = characters.slice(indexOfFirstPost, indexOfLastPost)
 
   const renderItems = () => {
-    return characters.map(item => (
-      <Grid key={item.id} item xs={12} sm={4} md={2} lg={2} className={classes.itemCard}>
+    return currentPost.map((item) => (
+      <Grid key={item.id} item xs={12} sm={4} md={3} lg={3} className={classes.itemCard}>
         <CardInfo item={item} onPress={() => loadCharacterById(item)} />
-      </Grid>
-    ))
+      </Grid>))
   }
 
   return (
     <div>
       <Grid container className={classes.contentCards} align={'center'}>
-        { renderItems() }
+        { loading ? <Loader visible={loading} /> : renderItems() }
       </Grid>
       <div>
         <Pagination
+          className={classes.paginator}
           onChange={(pageNumber) => onPageChange(pageNumber)}
           current={currentPage}
           defaultCurrent={1}
           total={90}
         />
+        <Loader visible />
       </div>
     </div>
   )
@@ -84,7 +89,13 @@ const mapStateToProps = (state) => ({
 
 const enhance = compose(
   withStyles(styleSheet),
-  connect(mapStateToProps, { loadAllCharacters, loadCharacterById, filterResults, clearFilter }),
+  connect(mapStateToProps, {
+    loadAllCharacters,
+    loadCharacterById,
+    filterResults,
+    clearFilter,
+    updateCurrentPage,
+  }),
 )
 
 export default enhance(CharactersScreen)
